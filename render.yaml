@@ -1,0 +1,21 @@
+# One-click deploy on Render (render.com): New > Blueprint > pick this repo.
+services:
+  - type: web
+    name: arena-clash
+    runtime: node
+    plan: starter            # paid, always on. Free instances sleep and have NO persistent disk, so progress would be lost.
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    disk:
+      name: arena-data       # this is where accounts, coins, passes and payments are saved
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - { key: NODE_ENV, value: production }
+      - { key: DATA_DIR, value: /var/data }
+      - { key: TRUST_PROXY, value: "1" }
+      - { key: ADMIN_PASSWORD, sync: false }          # you type this in the Render dashboard (the Teddy0617 password)
+      - { key: STRIPE_SECRET_KEY, sync: false }       # sk_live_...
+      - { key: STRIPE_WEBHOOK_SECRET, sync: false }   # whsec_...
+      - { key: PUBLIC_URL, sync: false }              # https://your-app.onrender.com (or your own domain)
